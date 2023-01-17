@@ -2,10 +2,9 @@
 
 extern void Configurar_UART3(void)
 {
-    SYSCTL->RCGCUART  = (1<<3);   //Paso 1 (RCGCUART) pag.388 UART/modulo0 0->Disable 1->Enable
-    SYSCTL->RCGCGPIO |= (1<<0);     //Paso 2 (RCGCGPIO) pag.382 Enable clock port A
-    //(GPIOAFSEL) pag.1770 Enable alternate function
-    GPIOA_AHB->AFSEL = (1<<5) | (1<<4);
+    SYSCTL->RCGCUART  = (1<<3);                  //Paso 1 (RCGCUART) pag.388 UART 3 0->Apagado 1->Encendido
+    SYSCTL->RCGCGPIO |= (1<<0);                 //
+    GPIOA_AHB->AFSEL = (1<<5) | (1<<4);         //(GPIOAFSEL) Habilitar funcion alterna 
     //GPIO Port Control (GPIOPCTL) PA4-> U3Rx PA5-> U3Tx pag.741
     GPIOA_AHB->PCTL = (GPIOA_AHB->PCTL&0xFFFFFF00) | 0x00000011;// (1<<0) | (1<<4);//0x00000011
     // GPIO Digital Enable (GPIODEN) pag.682
