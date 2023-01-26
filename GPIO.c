@@ -40,7 +40,8 @@ extern void Configurar_GPIO(void)
     GPIOJ_AHB->IM |= (1<<1) | (1<<0);
     // numero de interrupcion PORTJ = 51
     // n=12 ----> [4n+3] [4n+2] [4n+1] [4n] ---> [4n+3]
-
+ //   NVIC_PRI12_R = (NVIC_PRI12_R&0X00FFFFFF) | 0X80000000; //Jerarquia 4
+ //   NVIC_EN1_R = 0X00080000;
 }
 
 extern void Prender_LED(void)
@@ -52,13 +53,12 @@ extern void Prender_LED(void)
 
 extern void GPIOJ_INT_ISR(void)
 {
-    if (GPIOJ_AHB->RIS == (1<<0))
-    
+    if (GPIOJ_AHB->RIS == (1<<0))//J0  el cero representara que se presiono el boton 0 y en pycharm se contara los ceros enviados
     {
         GPIOF_AHB->DATA = (0<<4);
+      //  tarar(20,128);  //numero de datos, a que ganancia
     }
-
-    if (GPIOJ_AHB->RIS == (1<<1))
+    if (GPIOJ_AHB->RIS == (1<<1))//J1 el uno representara que se presiono el boton 1
     {
 
         GPIOF_AHB->DATA = (0<<0);
