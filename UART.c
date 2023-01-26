@@ -2,9 +2,10 @@
 
 extern void Configurar_UART3(void)
 {
-    SYSCTL->RCGCUART  = (1<<3);                  //Paso 1 (RCGCUART) pag.388 UART 3 0->Apagado 1->Encendido
-    SYSCTL->RCGCGPIO |= (1<<0);                 //
-    GPIOA_AHB->AFSEL = (1<<5) | (1<<4);         //(GPIOAFSEL) Habilitar funcion alterna 
+    SYSCTL->RCGCUART  = (1<<3);   //Paso 1 (RCGCUART) pag.388 UART/modulo0 0->Disable 1->Enable
+    SYSCTL->RCGCGPIO |= (1<<0);     //Paso 2 (RCGCGPIO) pag.382 Enable clock port A
+    //(GPIOAFSEL) pag.1770 Enable alternate function
+    GPIOA_AHB->AFSEL = (1<<5) | (1<<4);
     //GPIO Port Control (GPIOPCTL) PA4-> U3Rx PA5-> U3Tx pag.741
     GPIOA_AHB->PCTL = (GPIOA_AHB->PCTL&0xFFFFFF00) | 0x00000011;// (1<<0) | (1<<4);//0x00000011
     // GPIO Digital Enable (GPIODEN) pag.682
@@ -28,6 +29,7 @@ extern void Configurar_UART3(void)
     UART3->CTL = (1<<0) | (1<<8) | (1<<9);
 
 
+
 }
 
 extern char readChar(void)
@@ -46,59 +48,30 @@ extern void printChar(char c)
     while((UART3->FR & (1<<5)) != 0 );
     UART3->DR = c;
 }
-extern void printString(char* string2)
+extern void printString(char* string)
 {
-    while(*string2)
+    while(*string)
     {
-        printChar(*(string2++));
+        printChar(*(string++));
     }
 }
 
-extern int readString(char delimitadorF,char *string,char *string2)
+extern int readString(char delimitador,char *string)
 {
-    int s=0;
-int j=0;
+
    int i=0;
    char c = readChar();
-   while(c != delimitadorF)
+   while(c != delimitador)
    {
-       string[i]=c;
+       *(string+i) = c;
        i++;
-       c=readChar();
-   }
-   s=i*2;
-   int h=0;
-   for(j=0;j<s;j++)
-   {
-       
-       string2[h]=string[i-1];
-       h++;
-       string2[h]=j+1;
-       h++;
-       i--;
+       c = readChar();
    }
 
    return i;
 
 }
-extern char invertirString(char *string)
-{
-    int i=0;
-int J=0;
-    int longitud = sizeof(string);
-  char temp;
-  for (int i= 0, j = longitud - 1; i < (longitud / 2); i++, J--) 
-  {
-    temp= string[i];
-    string[i] = string[J];
-    string[J] = temp;
-  }
-  return string;
-}
 //Experimento 2
-
 //El envio es su nombre  (rave) 
-
 // invertirlo y regresarlo con numeros consecutivos
 // entre letras (e1v2a3r) 
-
